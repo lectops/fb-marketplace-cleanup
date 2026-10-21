@@ -1,0 +1,83 @@
+# Marketplace cleanup configuration.
+#
+# Every key is optional — anything you omit falls back to the built-in default
+# in config.py. Paths are resolved relative to this file unless absolute.
+
+[browser]
+# Any Facebook/Messenger page works; it's only used to confirm you're logged in.
+entry_url = "https://www.facebook.com/messages"
+# Persistent Chromium profile dir. Holds your session so you only log in once.
+# This directory is git-ignored — it contains your live login cookies.
+profile_dir = "fb-cleanup-profile"
+
+[output]
+plan_path  = "marketplace-cleanup-plan.md"
+log_path   = "marketplace-cleanup-log.md"
+enum_cache = "marketplace-enum.json"
+
+[classifier]
+# A thread is "active" (left alone) if its last message is within this window.
+recent_days = 14
+# Between recent_days and gray_zone_days, threads are flagged for manual review
+# rather than auto-actioned.
+gray_zone_days = 30
+
+[execute]
+# When applying the plan, delete in batches of this size, pausing between
+# batches to stay gentle on Facebook.
+batch_size = 5
+batch_pause_seconds = 5
+
+[sweep]
+# Defaults for sweep.py (the simpler "delete everything older than N days" tool).
+# Both are overridable on the command line.
+threshold_days = 14
+max_actions = 300
+
+# ---------------------------------------------------------------------------
+# Phrase banks drive classification. Each is matched case-insensitively as a
+# substring of message text. The defaults below are tuned for English +
+# Filipino (Taglish) Marketplace chats — replace them with phrases in your own
+# language(s). Deleting a key here restores that bank's built-in default.
+# ---------------------------------------------------------------------------
+[phrases]
+# Counterparty said the item is gone -> DELETE.
+sold = [
+  "sold na", "sold po", "sold n po", "sold out", "nabenta na",
+  "taken na", "taken po", "may bumili na", "naibenta na",
+  "na-reserve", "nareserve", "reserved na", "naka-reserve",
+  "no longer available", "not available na",
+  "sold to someone", "given na", "ibinigay na",
+]
+
+# Deal completed / wrapped up politely -> ARCHIVE.
+closure = [
+  "received na", "natanggap ko na", "narecieve ko na", "narecieved",
+  "delivered na", "delivered, salamat", "delivered po",
+  "ayos na", "ok na po, salamat", "ok na, thanks", "okay na po salamat",
+  "thank you, enjoy", "thanks, enjoy", "enjoy the item",
+  "rated 5 stars", "5-star rating", "rated you 5",
+  "payment received", "received payment", "received the payment",
+  "natanggap ko na ang bayad", "na-receive ko na ang bayad",
+  "transaction complete", "deal closed",
+  "salamat po sa", "thanks po sa transaction",
+]
+
+# My availability/price question that was never answered -> DELETE (if old).
+inquiry_no_reply = [
+  "available pa po ba", "available pa po", "available pa ba",
+  "still available", "still avail", "is this still available",
+  "how much po", "magkano po", "magkano na lang",
+  "interested po", "interested ako", "po interested",
+  "pa-reserve", "pwedeng tingnan",
+]
+
+# Logistics in progress -> LEAVE (if recent).
+coordination = [
+  "meetup", "meet up", "magkita", "saan tayo",
+  "cod", "c.o.d", "cash on delivery", "j&t", "lalamove",
+  "gcash", "g-cash", "send mo sa", "paypal",
+  "ship", "lbc", "ninja van", "shopee xpress",
+  "pickup", "pick up", "pick-up",
+  "pa-reserve", "reserve mo",
+]

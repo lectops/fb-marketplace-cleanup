@@ -1,0 +1,23 @@
+# Browser profile — contains your live Facebook session cookies. NEVER commit.
+fb-cleanup-profile/
+
+# Generated output — contains real names, items, and thread IDs.
+marketplace-cleanup-log.md
+marketplace-cleanup-plan.md
+marketplace-cleanup-plan.json
+marketplace-enum.json
+
+# Scratch debug tooling and its captured output.
+debug_*
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
